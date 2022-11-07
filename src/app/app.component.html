@@ -1,0 +1,23 @@
+<div id="todo_container">
+    <h1 style="background-color: #0d47a1; color: white; padding: 20px;">Todo App</h1>
+
+    <div style="padding: 20px;">
+        <div class="row">
+            <div class="col" style="max-width: 400px;">
+                <input type="text" id="todo_add_description" class="form-control" placeholder="Description">
+            </div>
+    
+            <div class="col" style="max-width: 200px;">
+                <input type="date" id="todo_add_deadline" class="form-control" placeholder="Date of Deadline">
+            </div>
+    
+            <div class="col">
+                <button id="todo_add_submit" class="btn btn-primary">Add Todo</button>
+            </div>
+        </div>
+        <div id="todo_list" class="row"></div>
+    </div>
+
+</div>
+
+<router-outlet></router-outlet>

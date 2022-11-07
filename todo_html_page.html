@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Todo App</title>
+    <style>
+        html,body {
+            margin:0;
+            padding:0;
+        }
+        * {
+            font-family: Arial, sans-serif;
+        }
+        .row { padding: 4px; }
+        .col { display: inline-block; vertical-align: middle; padding: 4px; }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+        <div style="margin-bottom: 20px;">
+            <input type="text" id="todo_add_description" placeholder="Description">
+            <input type="date" id="todo_add_deadline" placeholder="Date of Deadline">
+            <button id="todo_add_submit">Add Todo</button>
+        </div>
+        <div id="todo_list"></div>
+    </div>
+
+    <script>
+        const todo_list = document.getElementById("todo_list");
+        function load_todo_list() {
+            api_request("GET", "/api/v1/todo/list", {})
+            .then(function(data) {
+                const list = JSON.parse(data);
+                todo_list.innerHTML = "";
+                console.log(list);
+
+                for(let i=0; i<list.length; i++) {
+                    const todo = list[i];
+
+                    const row = document.createElement("div");
+                    row.className = "row";
+
+                    // description
+                    const col_description = document.createElement("div");
+                    col_description.className = "col";
+                    col_description.innerText = todo.description;
+                    row.append(col_description);
+
+                    // deadline
+                    const col_deadline = document.createElement("div");
+                    col_deadline.className = "col";
+                    col_deadline.innerText = todo.deadlineDate;
+                    row.append(col_deadline);
+
+                    // delete button
+                    const col_delete_button = document.createElement("div");
+                    col_delete_button.className = "col";
+                    row.append(col_delete_button);
+
+                    const delete_button = document.createElement("button");
+                    delete_button.innerText = "Delete Todo";
+                    col_delete_button.append(delete_button);
+
+                    const todo_id = todo.id;
+                    delete_button.addEventListener("click", function() {
+                        api_request("POST", "/api/v1/todo/delete", { id: todo_id })
+                        .then(function() { load_todo_list(); });
+                    });
+
+
+                    todo_list.append(row);
+                }
+            });
+        }
+        load_todo_list();
+
+        // add todo form
+        const todo_add_description = document.getElementById("todo_add_description");
+        const todo_add_deadline = document.getElementById("todo_add_deadline");
+        const todo_add_submit = document.getElementById("todo_add_submit");
+
+        todo_add_submit.addEventListener("click", function() {
+            api_request("POST", "/api/v1/todo/add", {
+                description: todo_add_description.value,
+                deadlineDate: todo_add_deadline.value
+            })
+            .then(function() { load_todo_list(); });
+        });
+    </script>
+</body>
+</html>
